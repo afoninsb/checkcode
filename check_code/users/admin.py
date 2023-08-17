@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.forms import UserCreationForm, UserChangeForm
-from users.models import CustomUser
 from files.admin import CodeFileInline
+from users.forms import UserChangeForm, UserCreationForm
+from users.models import CustomUser
 
 
 @admin.register(CustomUser)

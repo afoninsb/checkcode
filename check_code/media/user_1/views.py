@@ -3,6 +3,8 @@ import json
 from datetime import datetime, timedelta
 
 import redis
+from bots.models import Bot
+from bots.tgbot.bot_class import BotTG
 from core.admin_data import get_admin_data
 from django.conf import settings
 from django.db import IntegrityError
@@ -12,9 +14,6 @@ from django.views.decorators.csrf import csrf_exempt
 from tarifs.models import Payment as Payment_db
 from yookassa import Configuration, Payment
 from yookassa.domain.notification import WebhookNotification
-
-from bots.models import Bot
-from bots.tgbot.bot_class import BotTG
 
 
 def index(request):

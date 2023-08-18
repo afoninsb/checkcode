@@ -1,32 +1,54 @@
+from datetime import datetime
 from typing import Any
+
 import psycopg2
-from config import config
+
+from .config import config
 
 
 def connect():
     try:
-        return psycopg2.connect(config.DB_URI)
-    except Exception:
-        print('Can`t establish connection to database')
+        return psycopg2.connect(
+            dbname=config.DB_NAME,
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            host=config.DB_HOST,
+            port=config.DB_PORT
+        )
+    except Exception as e:
+        print('Can`t establish connection to database', e)
 
 
 def save_result(data: dict[str, Any]):
     conn = connect()
+    cursor = conn.cursor()
     sql = (
-        'INSERT INTO files_checkcode (code_id, result, status, sent_email) '
-        'VALUES (%s, %s, %s, %s), '
-        f'({data["code_id"]}, {data["result"]}, {data["status"]}, False)'
+        'INSERT INTO files_checkcode '
+        '(code_id, time, result, status, sent_email) '
+        'VALUES (%s, %s, %s, %s, %s)'
     )
-    with conn.cursor() as curs:
-        curs.execute(sql)
-        return curs.fetchone()[0]
+    values = (
+        data['code_id'], datetime.now(), data['result'], data['status'], False
+    )
+    cursor.execute(sql, values)
+    conn.commit()
+    sql = (
+        f'SELECT * FROM files_checkcode WHERE code_id={data["code_id"]} '
+        'ORDER BY time DESC'
+    )
+    cursor.execute(sql)
+    conn.commit()
+    check_id = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return check_id
 
 
 def update_result(check_id: int):
     conn = connect()
-    sql = (
-        'UPDATE files_checkcode SET sent_email = %s WHERE id = %s'
-        f', (True, {check_id})'
-    )
-    with conn.cursor() as curs:
-        curs.execute(sql)
+    cursor = conn.cursor()
+    sql = 'UPDATE files_checkcode SET sent_email = %s WHERE id = %s'
+    cursor.execute(sql, (True, check_id))
+    conn.commit()
+    cursor.close()
+    conn.close()

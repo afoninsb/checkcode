@@ -1,10 +1,11 @@
 import os
-import redis
 
-from django.conf import settings
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
+import redis
 from core.decorators import is_author
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
 from files.forms import CodeFileForm
 from files.models import CheckCode, CodeFile, FileStatus
 

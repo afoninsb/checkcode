@@ -1,12 +1,29 @@
 {% extends 'base.html' %} 
 
-{% block content %}
-<h2>Register</h2>
+{% block pagehead %}
+Зарегистрироваться
+{% endblock  %}
 
-<form method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Register">
-</form>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 p-5">
+      <div class="card">
+        <div class="card-body">
+          {% include 'includes/echo_error.html' %}
+          <form method="post" action="{% url 'users:signup' %}">
+            {% csrf_token %}
+            {% for field in form %}
+              {% include 'includes/echo_element.html' %}
+            {% endfor %}
+            <div class="col-md-10 offset-md-5">
+              <button type="submit" class="btn btn-primary">
+                Зарегистрироваться
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block pagehead %}
+  Проверки файла {{ checks.first.code }}
+{% endblock  %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-body">
+      <div>&nbsp;</div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Время проверки</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Имейл отправлен?</th>
+            <th scope="col">Отчёт</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for check in checks %}
+            <tr>
+              <td>{{ check.time }}</td>
+              <td><span style="color:{% if check.status == 'accepted' %}green{% else %}red{% endif %}">{{ check.status }}</span></td>
+              <td><span style="color:{% if check.sent_email %}green{% else %}red{% endif %}">{{ check.sent_email }}</span></td>
+              <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">
+                Отчёт
+              </button>
+              <div class="modal fade" id="modalDialogScrollable" tabindex="-1">
+                <div class="modal-dialog modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Отчёт от {{ check.time }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {{ check.result }}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

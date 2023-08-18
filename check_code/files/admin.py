@@ -33,9 +33,10 @@ class CodeFileAdmin(admin.ModelAdmin):
 
     def check_result(self, obj):
         """Результат провкерки"""
-        return obj.checkcode.first().result
+        if obj.checkcode.all():
+            return obj.checkcode.first().result
 
-    check_result.short_description = 'Результат последней провкерки'
+    check_result.short_description = 'Результат последней проверки'
 
 
 @admin.register(CheckCode)

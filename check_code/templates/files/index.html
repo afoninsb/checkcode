@@ -1,12 +1,54 @@
 {% extends "base.html" %}
 
+{% block pagehead %}
+  Ваши файлы
+{% endblock  %}
+
 {% block content %}
-  <h1>Список файлов</h1>
-
-  <ul>
-    {% for file in files %}
-    <li>{{ file }}</li>
-    {% endfor %}
-</ul>
-
+  <div class="card">
+    <div class="card-body">
+      <div>&nbsp;</div>
+      <ol class="list-group list-group-numbered">
+        {% for file in files %}
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">{{ file }}</div>
+              {% if file.description %}{{ file.description }}{% endif %}
+            </div>
+            <span class="badge {% if file.status == 'new' %}bg-primary
+            {% elif file.status == 'updated' %}bg-info
+            {% elif file.status == 'accepted' %}bg-success
+            {% else %}bg-danger
+            {% endif %}">
+              {{ file.status }}
+            </span>
+            <span class="badge">
+              {% if file.checkcode.first %}
+                <a href="{% url 'files:reports' file.id %}" class="edit"><i class="ri-file-text-line ri-xl" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Результат анализа"></i></a>
+              {% endif %}
+              <a href="{% url 'files:reupload' file.id %}" class="edit"><i class="ri-arrow-go-back-fill ri-xl" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Обновить"></i></a>
+              <a href='#' title='Удалить категорию' onclick="
+              Swal.fire({
+                  icon: 'warning',
+                  title: 'Вы точно хотите удалить файл?',
+                  showCancelButton: true,
+                  confirmButtonColor: '#d33',
+                  cancelButtonColor: '#3085d6',
+                  confirmButtonText: 'Да! Удаляем!',
+                  cancelButtonText: 'Нет! Я передумал...'
+              }).then(function(inputvalue){
+                  if(inputvalue.isConfirmed){
+                      window.location.href = '{% url 'files:delete' file.id %}';
+                  } else {
+                      Swal.fire('Хорошо. Оставляем.', '', 'success')
+                  }
+              });">
+              <i class="ri-delete-bin-5-fill ri-xl" data-bs-toggle="tooltip" data-bs-placement="top" title="Удалить файл" style="cursor: pointer;"></i>
+            </a>
+        </span>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
 {% endblock %}

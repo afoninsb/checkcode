@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="d-flex align-items-center justify-content-between">
+  <a href="/" class="logo d-flex align-items-center">
+    <i class="ri-robot-fill ri-2x"></i>&nbsp;&nbsp;
+    <span class="d-none d-lg-block">CheckFiles</span>
+  </a>
+  <i class="bi bi-list toggle-sidebar-btn"></i>
+</div><!-- End Logo --> 
+
+<nav class="header-nav ms-auto">
+  <ul class="d-flex align-items-center">
+    <li class="nav-item">{{ user.email }}</li>
+    {% if user.is_authenticated %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+  
+    {% else %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'users:signup' %}">Sign Up</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+    {% endif %}
+  </ul>
+</nav><!-- End Icons Navigation -->

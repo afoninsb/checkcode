@@ -1,10 +1,11 @@
 import os
+
 from django.conf import settings
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from core.decorators import is_author
 from files.forms import CodeFileForm
-from files.models import CheckCode, CodeFile
+from files.models import CheckCode, CodeFile, FileStatus
 
 
 @login_required
@@ -33,6 +34,8 @@ def reupload(request, file_id, **kwargs):
         settings.MEDIA_ROOT, f'user_{request.user.id}', code.upload.name)
     if os.path.isfile(path):
         os.remove(path)
+    new_code = form.save(commit=False)
+    new_code.status = FileStatus.UPDATED
     form.save()
     return redirect('files:index')
 

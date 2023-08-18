@@ -1,4 +1,5 @@
 import os
+import redis
 
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -6,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from core.decorators import is_author
 from files.forms import CodeFileForm
 from files.models import CheckCode, CodeFile, FileStatus
+
+r = redis.Redis(decode_responses=True)
 
 
 @login_required
@@ -16,6 +19,12 @@ def upload(request):
     code = form.save(commit=False)
     code.author = request.user
     form.save()
+    path = os.path.join(settings.MEDIA_ROOT, code.upload.name)
+    data = (
+        f'{code.id}:{path}:{code.upload.name.split("/")[-1]}:'
+        f'{request.user.email}'
+    )
+    r.lpush('to_check', data)
     return redirect('files:index')
 
 
@@ -37,6 +46,12 @@ def reupload(request, file_id, **kwargs):
     new_code = form.save(commit=False)
     new_code.status = FileStatus.UPDATED
     form.save()
+    path = os.path.join(settings.MEDIA_ROOT, new_code.upload.name)
+    data = (
+        f'{new_code.id}:{path}:{new_code.upload.name.split("/")[-1]}:'
+        f'{request.user.email}'
+    )
+    r.lpush('to_check', data)
     return redirect('files:index')
 
 

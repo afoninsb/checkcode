@@ -5,11 +5,14 @@ from core.decorators import is_author
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-
 from files.forms import CodeFileForm
 from files.models import CheckCode, CodeFile, FileStatus
 
-r = redis.Redis(decode_responses=True)
+r = redis.StrictRedis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    decode_responses=True
+)
 
 
 @login_required

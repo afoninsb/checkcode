@@ -1,6 +1,6 @@
 from string import Template
 
-from .config import config
+from config import config
 
 
 def read_template():

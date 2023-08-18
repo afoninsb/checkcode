@@ -1,5 +1,4 @@
 from django.http import HttpResponseForbidden
-
 from files.models import CodeFile
 
 

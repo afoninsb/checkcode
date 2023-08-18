@@ -1,4 +1,4 @@
-import os
+import logging
 import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -7,22 +7,38 @@ from email.mime.text import MIMEText
 import redis
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import after_setup_logger
+from config import config
+from db import save_result, update_result
+from functions import read_template
 
-from .config import config
-from .db import save_result, update_result
-from .functions import read_template
+logger = logging.getLogger(__name__)
 
-r = redis.Redis(decode_responses=True)
+r = redis.Redis(
+    host=config.REDIS_HOST,
+    port=config.REDIS_PORT,
+    decode_responses=True
+)
 
 app = Celery(
-    'check_tasks',
-    broker=config.REDIS_DSN,
-    backend=config.REDIS_DSN,
+    'tasks',
+    broker=f'redis://{config.REDIS_HOST}:{config.REDIS_PORT}',
+    backend=f'redis://{config.REDIS_HOST}:{config.REDIS_PORT}',
 )
 
 app.conf.update(
     result_expires=config.RESULT_EXPIRES,
 )
+
+
+@after_setup_logger.connect
+def setup_loggers(logger, *args, **kwargs):
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh = logging.StreamHandler()
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
 
 
 @app.on_after_configure.connect
@@ -47,8 +63,6 @@ def check_code():
     codes = r.lpop('to_check', length)
     for code in codes:
         code_id, code_path, code_name, user_email = code.split(':')
-        if not os.path.isfile(code_path):
-            return
         # Посылаем на анализ - запускаем функцию или POST-запрос на API
 
         # Моделируем результат проверки
@@ -78,7 +92,7 @@ def send_email():
         message_template = read_template()
         s = smtplib.SMTP(host=config.SMTP_HOST, port=config.SMTP_PORT)
         s.starttls()
-        s.login(config.SMTP_EMAIL, config.SMTP_PASSWORD)
+        a = s.login(config.SMTP_EMAIL, config.SMTP_PASSWORD)
         msg = MIMEMultipart()
         message = message_template.substitute(
             NAME=code_name,

@@ -2,8 +2,7 @@ from datetime import datetime
 from typing import Any
 
 import psycopg2
-
-from .config import config
+from config import config
 
 
 def connect():
@@ -40,6 +39,9 @@ def save_result(data: dict[str, Any]):
     cursor.execute(sql)
     conn.commit()
     check_id = cursor.fetchone()[0]
+    sql = 'UPDATE files_codefile SET status = %s WHERE id = %s'
+    cursor.execute(sql, (data['status'], data['code_id']))
+    conn.commit()
     cursor.close()
     conn.close()
     return check_id

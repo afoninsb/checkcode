@@ -27,6 +27,7 @@ app.conf.update(
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
+    """Расписание периодических задач."""
     sender.add_periodic_task(
         crontab(minute=f'*/{config.CHECK_INTERVAL}'),
         check_code.s(),
@@ -39,6 +40,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 @app.task
 def check_code():
+    """Запускаем проверку файлов в очереди и отправляем на отправку."""
     length = r.llen('to_check')
     if length == 0:
         return
@@ -66,6 +68,7 @@ def check_code():
 
 @app.task
 def send_email():
+    """Отправляем по почте результаты анализа."""
     length = r.llen('to_email')
     if length == 0:
         return

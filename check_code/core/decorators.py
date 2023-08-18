@@ -4,6 +4,7 @@ from files.models import CodeFile
 
 
 def is_author(func):
+    """Проверка, что пользователь - автор файла."""
     def wrapper(request, **kwargs):
         file_id = kwargs.get('file_id')
         if not file_id:

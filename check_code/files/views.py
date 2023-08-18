@@ -14,6 +14,7 @@ r = redis.Redis(decode_responses=True)
 
 @login_required
 def upload(request):
+    """Загрузка файла с кодом."""
     form = CodeFileForm(request.POST or None, request.FILES or None)
     if not form.is_valid():
         return render(request, 'files/upload.html', {'form': form})
@@ -32,6 +33,7 @@ def upload(request):
 @login_required
 @is_author
 def reupload(request, file_id, **kwargs):
+    """Обновление файла с кодом."""
     code = kwargs.get('code', None)
     form = CodeFileForm(
         request.POST or None,
@@ -59,6 +61,7 @@ def reupload(request, file_id, **kwargs):
 @login_required
 @is_author
 def delete(request, file_id, **kwargs):
+    """Удаление файла."""
     code = kwargs.get('code', None)
     code.upload.delete()
     code.delete()
@@ -68,13 +71,14 @@ def delete(request, file_id, **kwargs):
 @login_required
 @is_author
 def reports(request, file_id, **kwargs):
+    """Отчёты об анализе кода в файле."""
     checks = CheckCode.objects.filter(code_id=file_id).select_related('code')
     return render(request, 'files/reports.html', {'checks': checks})
 
 
 @login_required
 def index(request):
-    """Главная страница сайта - список файлов."""
+    """Главная страница сайта - список файлов пользователя."""
     files = CodeFile.objects.filter(
         author=request.user).prefetch_related('checkcode')
     return render(request, 'files/index.html', {'files': files})

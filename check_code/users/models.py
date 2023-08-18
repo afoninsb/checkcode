@@ -5,6 +5,7 @@ from users.managers import CustomUserManager
 
 
 class CustomUser(AbstractUser):
+    """Модель пользователя."""
     username = None
     email = models.EmailField('email', unique=True)
 

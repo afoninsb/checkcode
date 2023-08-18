@@ -20,6 +20,7 @@ def connect():
 
 
 def save_result(data: dict[str, Any]):
+    """Сохраняем результат анализа в базу данных."""
     conn = connect()
     cursor = conn.cursor()
     sql = (
@@ -45,6 +46,7 @@ def save_result(data: dict[str, Any]):
 
 
 def update_result(check_id: int):
+    """Обновляем результат анализа после отправки письма."""
     conn = connect()
     cursor = conn.cursor()
     sql = 'UPDATE files_checkcode SET sent_email = %s WHERE id = %s'

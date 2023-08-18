@@ -3,6 +3,7 @@ from users.models import CustomUser
 
 
 class CustomUserCreationForm(UserCreationForm):
+    """Форма создания пользователя."""
 
     class Meta:
         model = CustomUser
@@ -10,6 +11,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
+    """Форма редактирования пользователя."""
 
     class Meta:
         model = CustomUser

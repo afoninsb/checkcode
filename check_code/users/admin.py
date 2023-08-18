@@ -8,6 +8,7 @@ from users.models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    """Представление пользователя в админке."""
     add_form = UserCreationForm
     form = UserChangeForm
     model = CustomUser

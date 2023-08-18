@@ -21,6 +21,7 @@ class FileStatus(models.TextChoices):
 
 
 class CodeFile(models.Model):
+    """Модель файла с кодом."""
     upload = models.FileField(upload_to=user_directory_path)
     status = models.CharField(
         'Статус файла',
@@ -61,6 +62,7 @@ class CodeFile(models.Model):
 
 
 class CheckCode(models.Model):
+    """Модель проверки файла."""
     code = models.ForeignKey(
         CodeFile,
         on_delete=models.CASCADE,

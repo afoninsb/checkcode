@@ -4,6 +4,7 @@ from files.models import CodeFile
 
 
 class CodeFileForm(forms.ModelForm):
+    """Форма загрузки файла."""
 
     class Meta:
         model = CodeFile

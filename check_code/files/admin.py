@@ -13,6 +13,7 @@ class CheckInline(admin.TabularInline):
 
 @admin.register(CodeFile)
 class CodeFileAdmin(admin.ModelAdmin):
+    """Представление файлов в админке."""
     list_display = (
         'id',
         'upload',
@@ -41,5 +42,6 @@ class CodeFileAdmin(admin.ModelAdmin):
 
 @admin.register(CheckCode)
 class CheckCodeAdmin(admin.ModelAdmin):
+    """Форма проверок в админке."""
     list_display = ('id', 'code', 'time', 'result', 'status', 'sent_email')
     list_filter = ('status', )

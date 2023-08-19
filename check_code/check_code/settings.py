@@ -1,9 +1,7 @@
 import os
 from pathlib import Path
 
-import sentry_sdk
 from dotenv import load_dotenv
-from sentry_sdk.integrations.django import DjangoIntegration
 
 load_dotenv()
 
@@ -110,18 +108,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-sentry_sdk.init(
-    dsn=str(os.getenv('SENTRY_DSN')),
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=1.0,
-    send_default_pii=True
-)
-
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles" 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = '/var/www/html/media/'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "mediafiles"

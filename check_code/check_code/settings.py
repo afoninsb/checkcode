@@ -20,8 +20,7 @@ LOGOUT_REDIRECT_URL = 'login'
 REDIS_HOST = os.getenv('REDIS_HOST')
 REDIS_PORT = os.getenv('REDIS_PORT')
 
-
-DEBUG = os.getenv("DEBUG", 'False').lower() in ('true', '1', 't')
+DEBUG = False
 
 ALLOWED_HOSTS = ('localhost', '127.0.0.1', 'web')
 
@@ -111,25 +110,18 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static/'
+sentry_sdk.init(
+    dsn=str(os.getenv('SENTRY_DSN')),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
 
-if not DEBUG:
-    STATIC_ROOT = '/var/www/html/static/'
-    sentry_sdk.init(
-        dsn=str(os.getenv('SENTRY_DSN')),
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=1.0,
-        send_default_pii=True
-    )
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles" 
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 MEDIA_URL = '/media/'
 
-if DEBUG:
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-else:
-    MEDIA_ROOT = '/var/www/html/media/'
+MEDIA_ROOT = '/var/www/html/media/'
